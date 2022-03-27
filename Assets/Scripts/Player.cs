@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Packages.Rider.Editor.UnitTesting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,7 +10,7 @@ public class Player : MonoBehaviour
 
     public Tilemap tiles;
 
-    public Sprite tileSprite;
+    public TileBase tileSprite;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +21,31 @@ public class Player : MonoBehaviour
     void Update()
     {
         float axis = 0f;
-        if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical"))
+
+        Vector2Int oldPosition = position;
+        
+        if (Input.GetButtonDown("Horizontal"))
+        {
+            if (Input.GetAxis("Horizontal") > 0)
+                position.x += 1;
+            else
+                position.x -= 1;
+            
+        }
+
+        if (Input.GetButtonDown("Vertical"))
+        {
+            if (Input.GetAxis("Vertical") > 0)
+                position.y += 1;
+            else
+                position.y -= 1;
+            
+            
+        }
+        
+        setNewTile(oldPosition, position);
+        
+        /*if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
             axis = Input.GetAxis("Horizontal");
             if (axis > 0.5f)
@@ -40,9 +65,16 @@ public class Player : MonoBehaviour
                 position.y -= 1;
             }
 
-            tiles = new Tilemap();
+            //tiles = new Tilemap();
             Vector3Int tempPosition = new Vector3Int(position.x, position.y, 0);
-            tiles.SetTile((Vector3Int) position, tileSprite);
-        }
+            tiles.SetTile(new Vector3Int(position.x, position.y, 0), tileSprite);
+        }*/
+    }
+
+    void setNewTile(Vector2Int oldPosition, Vector2Int newPosition)
+    {
+        tiles.SetTile((Vector3Int) oldPosition, null);
+        tiles.SetTile((Vector3Int) newPosition, tileSprite);
+        
     }
 }
