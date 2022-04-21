@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private enum CommandTypes
     {
         Move,
-        ExchangePosition,
+        Attack,
         None
     }
     
@@ -114,8 +114,32 @@ public class Player : MonoBehaviour
             switch (CommandSetType)
             {
                 case CommandTypes.Move:
+                    foreach (var character in Characters)
+                    {
+                        if (character.GetPosition() == Position)
+                        {
+                            CommandSetType = CommandTypes.None;
+                            Command = null;
+                            UI.gameObject.SetActive(false);
+                            Index = -1;
+                            return;
+                        }
+                    }
                     (Command as MoveCommand).SetMoveTarget(Position);
                     CommandSetType = CommandTypes.None;
+                    break;
+                
+                case CommandTypes.Attack:
+                    foreach (var character in Characters)
+                    {
+                        if (character == Command.user)
+                            continue;
+                        if (character.GetPosition() == Position) {
+                            (Command as AttackCommand).target = character;
+                            CommandSetType = CommandTypes.None;
+                            break;
+                        }
+                    }
                     break;
             }
 
@@ -228,5 +252,11 @@ public class Player : MonoBehaviour
         }
         
         tiles.SetTile((Vector3Int) Position, tileSprite);
+    }
+    
+    public void SetAttackCommand()
+    {
+        CommandSetType = CommandTypes.Attack;
+        Command = new AttackCommand(Characters[Index]);
     }
 }
