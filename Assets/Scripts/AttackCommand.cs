@@ -52,11 +52,13 @@ public class AttackCommand : Command
         {
             int distance = Vector2IntExtension.Distance(movement, targetPosition);
             if (distance >= user.weapon.minRange && distance <= user.weapon.maxRange && !Player.Instance.ContainPlayer(movement)) {
-                if (!user.Move(new Vector2((float) movement.x - userPosition.x, (float) movement.y - userPosition.y)))
-                    Debug.Log("Move not working.");
-                target.GetHit(user.weapon.damage);
-                user.Played();
-                return true;
+                if (user.Move(new Vector2((float) movement.x - userPosition.x, (float) movement.y - userPosition.y)))
+                {
+                    target.GetHit(user.weapon.damage);
+                    user.Played();
+
+                    return true;
+                }
             }
         }
 

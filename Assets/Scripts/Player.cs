@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,6 +12,8 @@ public class Player : MonoBehaviour
         None
     }
 
+    public static Action OnTurnChange;
+    
     public static Player Instance;
     public List<TileBase> numbers;
     private Tilemap NumberTilemap;
@@ -46,6 +49,8 @@ public class Player : MonoBehaviour
             Instance = this;
         NumberTilemap = GameObject.FindWithTag("NumberTiles").GetComponent<Tilemap>();
 
+        Character.OnDeath += OnCharDeath;
+        
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
         
         UI = UIObject.GetComponent<UITracking>();
@@ -119,7 +124,7 @@ public class Player : MonoBehaviour
                 
                 if (!Command.undoable)
                     Commands = new List<Command>();
-                
+
                 Command = null;
             }
             
@@ -180,7 +185,6 @@ public class Player : MonoBehaviour
 
     private void ShowMovements()
     {
-        Debug.Log(Position);
         var character = Characters[Index];
 
         Dictionary<Vector2Int, int> possibleMovements = character.GetPossibleMovements();
@@ -193,7 +197,8 @@ public class Player : MonoBehaviour
                 NumberTilemap.SetTile((Vector3Int) tile, numbers[possibleMovements[tile] - 1]);
             }
 
-            if (character.GetPlayed() || ContainPlayer(tile))
+            Character characterIn;
+            if (character.GetPlayed() || (ContainPlayer(tile, out characterIn) && characterIn != character))
                 continue;
             foreach (var neighbor in Vector2IntExtension.neighbors)
             {
@@ -271,6 +276,21 @@ public class Player : MonoBehaviour
         return false;
     }
 
+    public bool ContainPlayer(Vector2Int position, out Character playerIn)
+    {
+        foreach (var character in Characters)
+        {
+            if (character.GetPosition() == position)
+            {
+                playerIn = character;
+                return true;
+            }
+        }
+
+        playerIn = null;
+        return false;
+    }
+    
     public bool ContainPlayer(Vector2Int position)
     {
         foreach (var character in Characters)
@@ -278,7 +298,33 @@ public class Player : MonoBehaviour
             if (character.GetPosition() == position)
                 return true;
         }
-
+        
         return false;
+    }
+
+    public void ChangeTurn()
+    {
+        OnTurnChange.Invoke();
+        UI.gameObject.SetActive(false);
+        Index = -1;
+        CommandSetType = CommandTypes.None;
+        Command = null;
+        Commands = new List<Command>();
+    }
+
+    public void OnCharDeath()
+    {
+        foreach (var character in Characters)
+        {
+            if (character.health <= 0)
+            {
+                Characters.Remove(character);
+                Index = -1;
+                NumberTilemap.ClearAllTiles();
+                UI.gameObject.SetActive(false);
+                CommandSetType = CommandTypes.None;
+                return;
+            }
+        }
     }
 }

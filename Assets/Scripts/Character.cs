@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class Character : MonoBehaviour
 {
+    public static Action OnDeath;
+    
     private bool HasPlayed;
     private Vector2 Position;
     private TextMeshPro Text;
@@ -20,6 +22,8 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
+
+        Player.OnTurnChange += ChangeTurn;
         
         maxMovement = movementPoints;
         Text = GetComponentInChildren<TextMeshPro>();
@@ -33,12 +37,12 @@ public class Character : MonoBehaviour
     public bool Move(Vector2 direction)
     {
         //check easy conditions like if it's too far, or if we're trying to get to the same place we're already at
-        if (direction == Vector2.zero)
+        /*if (direction == Vector2.zero)
             return false;
         
         int distance = (int) Math.Abs(direction.x) + (int) Math.Abs(direction.y);
         if (distance > movementPoints)
-            return false;
+            return false;*/
         
         Vector2Int positionInt = new Vector2Int((int) (Position.x + direction.x), (int) (Position.y + direction.y));
         Dictionary<Vector2Int, int> possibleMovements = GetPossibleMovements();
@@ -82,8 +86,10 @@ public class Character : MonoBehaviour
     {
         health -= damage;
         Text.text = health.ToString();
-        if (health <= 0)
+        if (health <= 0) {
+            OnDeath.Invoke();
             Destroy(gameObject);
+        }
     }
 
     public Dictionary<Vector2Int, int> GetPossibleMovements()
@@ -92,12 +98,6 @@ public class Character : MonoBehaviour
         movementMap.Add(GetPosition(), 0);
         Tilemap walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
 
-        List<Vector2Int> neighbors = new List<Vector2Int>();
-        neighbors.Add(Vector2Int.up);
-        neighbors.Add(Vector2Int.right);
-        neighbors.Add(Vector2Int.down);
-        neighbors.Add(Vector2Int.left);
-        
         for (int x = 0; x < movementPoints; x++)
         {
             List<Vector2Int> newList = new List<Vector2Int>();
@@ -105,7 +105,7 @@ public class Character : MonoBehaviour
             {
                 newList.Add(movement.Key);
 
-                foreach (var neighbor in neighbors)
+                foreach (var neighbor in Vector2IntExtension.neighbors)
                 {
                     if (!movementMap.ContainsKey(movement.Key + neighbor) &&
                         walls.GetTile((Vector3Int) (movement.Key + neighbor)) == null) 
@@ -127,10 +127,17 @@ public class Character : MonoBehaviour
 
     public void Played() {
         HasPlayed = true;
+        movementPoints = 0;
     }
 
     public bool GetPlayed()
     {
         return HasPlayed;
+    }
+
+    public void ChangeTurn()
+    {
+        HasPlayed = false;
+        movementPoints = maxMovement;
     }
 }
