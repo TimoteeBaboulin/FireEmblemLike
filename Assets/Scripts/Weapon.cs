@@ -12,6 +12,11 @@ public class Weapon : ScriptableObject
         None
     }
     
-    public int damage;
+    [Header("Type")]
     public WeaponType type;
+    
+    [Header("Stats")]
+    public int damage;
+    public int minRange;
+    public int maxRange;
 }

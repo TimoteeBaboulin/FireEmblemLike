@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6766729fcb01134c945c5cec0ca3534, type: 3}
   m_Name: Iron Sword
   m_EditorClassIdentifier: 
-  damage: 5
   type: 0
+  damage: 5
+  minRange: 0
+  maxRange: 1

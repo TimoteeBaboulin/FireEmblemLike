@@ -1,12 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using DefaultNamespace;
-using Packages.Rider.Editor.UnitTesting;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -16,6 +10,10 @@ public class Player : MonoBehaviour
         Attack,
         None
     }
+
+    public static Player Instance;
+    public List<TileBase> numbers;
+    private Tilemap NumberTilemap;
     
     private List<Character> Characters;
     private List<Command> Commands;
@@ -34,7 +32,9 @@ public class Player : MonoBehaviour
 
     [Header("Tilemap")]
     public Tilemap tiles;
-    public TileBase tileSprite;
+    public Tilemap selectedTilemap;
+    public TileBase redTileSprite;
+    public TileBase selectedTile;
     public TileBase blueSquare;
 
     private Tilemap Walls;
@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         //Set up the different fields
+        if (Player.Instance == null)
+            Instance = this;
+        NumberTilemap = GameObject.FindWithTag("NumberTiles").GetComponent<Tilemap>();
 
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
         
@@ -83,7 +86,7 @@ public class Player : MonoBehaviour
     void setNewTile(Vector2Int oldPosition, Vector2Int newPosition)
     {
         tiles.SetTile((Vector3Int) oldPosition, null);
-        tiles.SetTile((Vector3Int) newPosition, tileSprite);
+        tiles.SetTile((Vector3Int) newPosition, redTileSprite);
         
     }
 
@@ -111,46 +114,20 @@ public class Player : MonoBehaviour
     {
         //verifies si on a deja un personnage selectionne
         if (Index != -1 && CommandSetType != CommandTypes.None) {
-            switch (CommandSetType)
-            {
-                case CommandTypes.Move:
-                    foreach (var character in Characters)
-                    {
-                        if (character.GetPosition() == Position)
-                        {
-                            CommandSetType = CommandTypes.None;
-                            Command = null;
-                            UI.gameObject.SetActive(false);
-                            Index = -1;
-                            return;
-                        }
-                    }
-                    (Command as MoveCommand).SetMoveTarget(Position);
-                    CommandSetType = CommandTypes.None;
-                    break;
-                
-                case CommandTypes.Attack:
-                    foreach (var character in Characters)
-                    {
-                        if (character == Command.user)
-                            continue;
-                        if (character.GetPosition() == Position) {
-                            (Command as AttackCommand).target = character;
-                            CommandSetType = CommandTypes.None;
-                            break;
-                        }
-                    }
-                    break;
-            }
-
-            if (Command.Execute()) {
+            if (CheckCommand() && Command.Execute()) {
                 Commands.Add(Command);
+                
+                if (!Command.undoable)
+                    Commands = new List<Command>();
+                
                 Command = null;
             }
             
             //remets l'index pour pointer sur aucun perso
             Index = -1;
+            NumberTilemap.ClearAllTiles();
             UI.gameObject.SetActive(false);
+            CommandSetType = CommandTypes.None;
         } else {
             //trouves si un personnage se trouve a l'endroit ou le pointeur est
             Index = 0;
@@ -192,6 +169,7 @@ public class Player : MonoBehaviour
         }
         Index = -1;
         UI.gameObject.SetActive(false);
+        NumberTilemap.ClearAllTiles();
     }
 
     public void SetMoveCommand()
@@ -205,58 +183,102 @@ public class Player : MonoBehaviour
         Debug.Log(Position);
         var character = Characters[Index];
 
-        List<Vector2Int> possibleMovements = new List<Vector2Int>();
-        possibleMovements.Add(character.GetPosition());
-        for (int x = 0; x < character.movementPoints; x++)
-        {
-            List<Vector2Int> newList = new List<Vector2Int>();
-            foreach (var movement in possibleMovements)
-            {
-                Vector2Int vector;
-
-                newList.Add(movement);
-
-                vector = movement + Vector2Int.up;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.right;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.down;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.left;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-            }
-
-            possibleMovements = newList;
-        }
-
-        foreach (var tile in possibleMovements)
+        Dictionary<Vector2Int, int> possibleMovements = character.GetPossibleMovements();
+        
+        foreach (var tile in possibleMovements.Keys)
         {
             tiles.SetTile(new Vector3Int(tile.x, tile.y, 0), blueSquare);
+            if (possibleMovements[tile] != 0)
+            {
+                NumberTilemap.SetTile((Vector3Int) tile, numbers[possibleMovements[tile] - 1]);
+            }
+
+            if (character.GetPlayed() || ContainPlayer(tile))
+                continue;
+            foreach (var neighbor in Vector2IntExtension.neighbors)
+            {
+                if (!possibleMovements.ContainsKey(tile + neighbor))
+                    tiles.SetTile((Vector3Int) (tile + neighbor), redTileSprite);
+            }
+        }
+
+        if (character.GetPlayed())
+            return;
+        foreach (var charactersVar in Characters)
+        {
+            Vector2Int characterPosition = charactersVar.GetPosition();
+            if (possibleMovements.ContainsKey(characterPosition)) {
+                tiles.SetTile((Vector3Int) characterPosition, redTileSprite);
+                NumberTilemap.SetTile((Vector3Int)characterPosition, null);
+            }
         }
     }
 
     private void UpdateTilemap()
     {
         tiles.ClearAllTiles();
-        
+        selectedTilemap.ClearAllTiles();
+
         if (Index != -1)
         {
             ShowMovements();
         }
         
-        tiles.SetTile((Vector3Int) Position, tileSprite);
+        selectedTilemap.SetTile((Vector3Int) Position, selectedTile);
     }
     
     public void SetAttackCommand()
     {
         CommandSetType = CommandTypes.Attack;
         Command = new AttackCommand(Characters[Index]);
+    }
+
+    public bool CheckCommand()
+    {
+        switch (CommandSetType)
+        {
+            case CommandTypes.Move:
+                foreach (var character in Characters)
+                {
+                    if (character.GetPosition() == Position)
+                    {
+                        CommandSetType = CommandTypes.None;
+                        Command = null;
+                        UI.gameObject.SetActive(false);
+                        NumberTilemap.ClearAllTiles();
+                        Index = -1;
+                        return false;
+                    }
+                }
+                (Command as MoveCommand).SetMoveTarget(Position);
+                CommandSetType = CommandTypes.None;
+                return true;
+
+            case CommandTypes.Attack:
+                foreach (var character in Characters)
+                {
+                    if (character == Command.user)
+                        continue;
+                    if (character.GetPosition() == Position) {
+                        (Command as AttackCommand).target = character;
+                        CommandSetType = CommandTypes.None;
+                        return true;
+                    }
+                }
+                return false;
+        }
+
+        return false;
+    }
+
+    public bool ContainPlayer(Vector2Int position)
+    {
+        foreach (var character in Characters)
+        {
+            if (character.GetPosition() == position)
+                return true;
+        }
+
+        return false;
     }
 }

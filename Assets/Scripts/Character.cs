@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -42,56 +41,21 @@ public class Character : MonoBehaviour
             return false;
         
         Vector2Int positionInt = new Vector2Int((int) (Position.x + direction.x), (int) (Position.y + direction.y));
+        Dictionary<Vector2Int, int> possibleMovements = GetPossibleMovements();
 
-        List<Vector2Int> possibleMovements = new List<Vector2Int>();
-        possibleMovements.Add(GetPosition());
-        
-        for (int x = 0; x < movementPoints; x++)
-        {
-            List<Vector2Int> newList = new List<Vector2Int>();
-            foreach (var movement in possibleMovements)
-            {
-                Vector2Int vector;
+        if (!possibleMovements.ContainsKey(positionInt))
+            return false;
 
-                newList.Add(movement);
-
-                vector = movement + Vector2Int.up;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.right;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.down;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-
-                vector = movement + Vector2Int.left;
-                if (!possibleMovements.Contains(vector) && Walls.GetTile((Vector3Int) vector) == null)
-                    newList.Add(vector);
-            }
-
-            possibleMovements = newList;
-            foreach (var movement in possibleMovements)
-            {
-                if (movement == positionInt) {
-                    Position = positionInt;
-                    transform.position = Position;
-                    movementPoints -= x + 1;
-                    return true;
-                }
-            }
-        }
-        
-        return false;
+        Position = positionInt;
+        transform.position = Position;
+        movementPoints -= possibleMovements[positionInt];
+        return true;
     }
 
     public bool UndoMove(int x, int y)
     {
         int distance = Math.Abs(x) + Math.Abs(y);
         movementPoints += distance;
-        Text.text = movementPoints.ToString();
         Position.Set(Position.x - x, Position.y - y);
         transform.position = Position;
         return true;
@@ -120,5 +84,53 @@ public class Character : MonoBehaviour
         Text.text = health.ToString();
         if (health <= 0)
             Destroy(gameObject);
+    }
+
+    public Dictionary<Vector2Int, int> GetPossibleMovements()
+    {
+        Dictionary<Vector2Int, int> movementMap = new Dictionary<Vector2Int, int>();
+        movementMap.Add(GetPosition(), 0);
+        Tilemap walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
+
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        neighbors.Add(Vector2Int.up);
+        neighbors.Add(Vector2Int.right);
+        neighbors.Add(Vector2Int.down);
+        neighbors.Add(Vector2Int.left);
+        
+        for (int x = 0; x < movementPoints; x++)
+        {
+            List<Vector2Int> newList = new List<Vector2Int>();
+            foreach (var movement in movementMap)
+            {
+                newList.Add(movement.Key);
+
+                foreach (var neighbor in neighbors)
+                {
+                    if (!movementMap.ContainsKey(movement.Key + neighbor) &&
+                        walls.GetTile((Vector3Int) (movement.Key + neighbor)) == null) 
+                    {
+                        newList.Add(movement.Key + neighbor);
+                    }
+                }
+            }
+
+            foreach (var movement in newList)
+            {
+                if (!movementMap.ContainsKey(movement))
+                    movementMap.Add(movement, x + 1);
+            }
+        }
+
+        return movementMap;
+    }
+
+    public void Played() {
+        HasPlayed = true;
+    }
+
+    public bool GetPlayed()
+    {
+        return HasPlayed;
     }
 }

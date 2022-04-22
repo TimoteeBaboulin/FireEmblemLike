@@ -5,6 +5,7 @@ using UnityEngine;
 public interface Command
 {
     public Character user { get; set; }
+    public bool undoable { get; set; }
     public bool Execute();
     public void Undo();
 }

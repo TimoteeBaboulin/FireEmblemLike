@@ -7,6 +7,7 @@ TagManager:
   - Characters
   - UI
   - Walls
+  - NumberTiles
   layers:
   - Default
   - TransparentFX
@@ -52,4 +53,7 @@ TagManager:
     locked: 0
   - name: Walls
     uniqueID: 2517808661
+    locked: 0
+  - name: Text
+    uniqueID: 2800063207
     locked: 0

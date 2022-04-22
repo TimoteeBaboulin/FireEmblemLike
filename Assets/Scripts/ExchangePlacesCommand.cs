@@ -4,6 +4,7 @@ namespace DefaultNamespace
 {
     public class ExchangePlacesCommand : Command
     {
+        public bool undoable { get; set; }
         public Character user { get; set; }
         public Character otherUser;
 
