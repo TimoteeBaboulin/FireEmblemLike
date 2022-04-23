@@ -822,8 +822,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
-  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
   movementPoints: 3
+  team: 
+  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
 --- !u!1 &750940780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1523,12 +1524,12 @@ SpriteRenderer:
   m_SortingLayerID: 1289693731
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 5770251550782387183, guid: 2685e61bf68da3d4cbd308a54dc795f2, type: 3}
+  m_Sprite: {fileID: 7172659130774439793, guid: 422a4b1f36b8d3e4aa74600a65453777, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.25, y: 1.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1547,8 +1548,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
-  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
   movementPoints: 3
+  team: 
+  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
 --- !u!95 &787252788
 Animator:
   serializedVersion: 3
@@ -1559,7 +1561,7 @@ Animator:
   m_GameObject: {fileID: 787252784}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6cffa3379d92716439f8665de72be4c7, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2f9a4b64e99ac1f43a81f8529b53e84b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -6604,8 +6606,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
-  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
   movementPoints: 3
+  team: 
+  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
 --- !u!1 &2063268107
 GameObject:
   m_ObjectHideFlags: 0

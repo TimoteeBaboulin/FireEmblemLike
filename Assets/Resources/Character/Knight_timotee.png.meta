@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: fec9874cc56500045968c4ae04000284
+guid: 422a4b1f36b8d3e4aa74600a65453777
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -1602089996479901459
     second: Knight_timotee_0
-  - first:
-      213: 7172659130774439793
-    second: Knight_timotee_1
   - first:
       213: -3202421899023693409
     second: Knight_timotee_2
@@ -21,9 +18,6 @@ TextureImporter:
       213: 4754414915829810585
     second: Knight_timotee_5
   - first:
-      213: 8783753056944463510
-    second: Knight_timotee_6
-  - first:
       213: 3931361680989402682
     second: Knight_timotee_7
   - first:
@@ -33,41 +27,71 @@ TextureImporter:
       213: -7837389262813681001
     second: Knight_timotee_9
   - first:
-      213: 6966770660012391314
-    second: Knight_timotee_10
-  - first:
       213: -5581068298936421520
     second: Knight_timotee_11
-  - first:
-      213: -9179460757622347489
-    second: Knight_timotee_12
   - first:
       213: 741317094066204417
     second: Knight_timotee_13
   - first:
-      213: -8202438571177161681
-    second: Knight_timotee_14
-  - first:
       213: -1977417073566706305
     second: Knight_timotee_15
-  - first:
-      213: -6120572827787371178
-    second: Knight_timotee_16
   - first:
       213: -8323438511879179996
     second: Knight_timotee_17
   - first:
-      213: 2686173124995763065
-    second: Knight_timotee_18
-  - first:
       213: -4896260238707328017
     second: Knight_timotee_19
   - first:
-      213: -2094290766762476045
-    second: Knight_timotee_20
-  - first:
       213: -4245498475388290103
     second: Knight_timotee_21
+  - first:
+      213: -1715910845733074073
+    second: Knight_timotee_22
+  - first:
+      213: 7257461028814136088
+    second: Knight_timotee_23
+  - first:
+      213: 6188563383296601117
+    second: Knight_timotee_25
+  - first:
+      213: -886953302732148811
+    second: Knight_timotee_26
+  - first:
+      213: 2678556064652629421
+    second: Knight_timotee_28
+  - first:
+      213: -731201664353502598
+    second: Knight_timotee_30
+  - first:
+      213: 8258404819330636078
+    second: Knight_timotee_31
+  - first:
+      213: -7722726719730888301
+    second: Knight_timotee_32
+  - first:
+      213: 7172659130774439793
+    second: Knight_timotee_1
+  - first:
+      213: 8783753056944463510
+    second: Knight_timotee_6
+  - first:
+      213: 6966770660012391314
+    second: Knight_timotee_10
+  - first:
+      213: -9179460757622347489
+    second: Knight_timotee_12
+  - first:
+      213: -8202438571177161681
+    second: Knight_timotee_14
+  - first:
+      213: -6120572827787371178
+    second: Knight_timotee_16
+  - first:
+      213: 2686173124995763065
+    second: Knight_timotee_18
+  - first:
+      213: -2094290766762476045
+    second: Knight_timotee_20
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -112,7 +136,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 41
+  spritePixelsToUnits: 48
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -164,8 +188,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -178,27 +202,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_1
-      rect:
-        serializedVersion: 2
-        x: 144
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 177c5c02a776a8360800000000000000
-      internalID: 7172659130774439793
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_2
       rect:
         serializedVersion: 2
@@ -206,8 +209,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -227,8 +230,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -248,8 +251,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -269,8 +272,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -283,27 +286,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_6
-      rect:
-        serializedVersion: 2
-        x: 864
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 69e1de1fdd826e970800000000000000
-      internalID: 8783753056944463510
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_7
       rect:
         serializedVersion: 2
@@ -311,8 +293,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -332,8 +314,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -353,8 +335,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -367,27 +349,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_10
-      rect:
-        serializedVersion: 2
-        x: 1440
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 29bf6a5f001fea060800000000000000
-      internalID: 6966770660012391314
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_11
       rect:
         serializedVersion: 2
@@ -395,8 +356,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -409,27 +370,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_12
-      rect:
-        serializedVersion: 2
-        x: 1728
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f19284863110c9080800000000000000
-      internalID: -9179460757622347489
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_13
       rect:
         serializedVersion: 2
@@ -437,8 +377,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -451,27 +391,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_14
-      rect:
-        serializedVersion: 2
-        x: 2016
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f2cc501f3951b2e80800000000000000
-      internalID: -8202438571177161681
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_15
       rect:
         serializedVersion: 2
@@ -479,8 +398,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -493,27 +412,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_16
-      rect:
-        serializedVersion: 2
-        x: 2304
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 65d53d9f07b5f0ba0800000000000000
-      internalID: -6120572827787371178
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_17
       rect:
         serializedVersion: 2
@@ -521,8 +419,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -535,27 +433,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_18
-      rect:
-        serializedVersion: 2
-        x: 2592
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 97bc298a934374520800000000000000
-      internalID: 2686173124995763065
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_19
       rect:
         serializedVersion: 2
@@ -563,8 +440,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -577,27 +454,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_timotee_20
-      rect:
-        serializedVersion: 2
-        x: 2880
-        y: 0
-        width: 144
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3fdfdb6c4a59fe2e0800000000000000
-      internalID: -2094290766762476045
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Knight_timotee_21
       rect:
         serializedVersion: 2
@@ -605,8 +461,8 @@ TextureImporter:
         y: 0
         width: 144
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -614,6 +470,174 @@ TextureImporter:
       bones: []
       spriteID: 9cbb40851a5f415c0800000000000000
       internalID: -4245498475388290103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_1
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 177c5c02a776a8360800000000000000
+      internalID: 7172659130774439793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_6
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69e1de1fdd826e970800000000000000
+      internalID: 8783753056944463510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_10
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29bf6a5f001fea060800000000000000
+      internalID: 6966770660012391314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_12
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f19284863110c9080800000000000000
+      internalID: -9179460757622347489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_14
+      rect:
+        serializedVersion: 2
+        x: 2016
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2cc501f3951b2e80800000000000000
+      internalID: -8202438571177161681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_16
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65d53d9f07b5f0ba0800000000000000
+      internalID: -6120572827787371178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_18
+      rect:
+        serializedVersion: 2
+        x: 2592
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97bc298a934374520800000000000000
+      internalID: 2686173124995763065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knight_timotee_20
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 144
+        height: 64
+      alignment: 9
+      pivot: {x: 0.35, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3fdfdb6c4a59fe2e0800000000000000
+      internalID: -2094290766762476045
       vertices: []
       indices: 
       edges: []

@@ -15,12 +15,19 @@ public class Character : MonoBehaviour
     private int maxMovement;
     private Tilemap Walls;
 
+    [Header("Character")]
     public int health;
-    public Weapon weapon;
     public int movementPoints;
+    public string team;
+    
+    [Header("Weapon")]
+    public Weapon weapon;
+    
 
     private void Awake()
     {
+        GetComponent<SpriteRenderer>().sprite =
+            Resources.Load<Sprite>("Characters/" + weapon.type.ToString().ToLower() + ".png");
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
 
         Player.OnTurnChange += ChangeTurn;
@@ -36,14 +43,6 @@ public class Character : MonoBehaviour
     
     public bool Move(Vector2 direction)
     {
-        //check easy conditions like if it's too far, or if we're trying to get to the same place we're already at
-        /*if (direction == Vector2.zero)
-            return false;
-        
-        int distance = (int) Math.Abs(direction.x) + (int) Math.Abs(direction.y);
-        if (distance > movementPoints)
-            return false;*/
-        
         Vector2Int positionInt = new Vector2Int((int) (Position.x + direction.x), (int) (Position.y + direction.y));
         Dictionary<Vector2Int, int> possibleMovements = GetPossibleMovements();
 
