@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     public static Action OnTurnChange;
 
     public static Player Instance;
+
+    private bool PlayerTurn;
     public List<TileBase> numbers;
     private Tilemap NumberTilemap;
 
@@ -42,6 +44,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        PlayerTurn = true;
         EnemyManager.OnEnemyTurnEnd += EnemyTurnOver;
         
         //Set up the different fields
@@ -80,6 +83,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!PlayerTurn)
+            return;
         if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical"))
         {
             MoveCursor();
@@ -322,9 +327,10 @@ public class Player : MonoBehaviour
 
     public void ChangeTurn()
     {
+        PlayerTurn = false;
         OnTurnChange.Invoke();
         UI.gameObject.SetActive(false);
-        Index = 1;
+        Index = -1;
         CommandSetType = CommandTypes.None;
         Command = null;
         Commands = new List<Command>();
@@ -334,17 +340,32 @@ public class Player : MonoBehaviour
 
     public void OnCharDeath()
     {
+        List<Character> cache = new List<Character>();
+        cache = PlayerCharacters;
         foreach (var character in PlayerCharacters)
         {
             if (character.health <= 0)
             {
-                PlayerCharacters.Remove(character);
+                cache.Remove(character);
             }
         }
+
+        PlayerCharacters = cache;
+
+        cache = EnemyCharacters;
+        foreach (var character in EnemyCharacters)
+        {
+            if (character.health <= 0)
+            {
+                cache.Remove(character);
+            }
+        }
+
+        EnemyCharacters = cache;
     }
 
     public void EnemyTurnOver()
     {
-        Index = -1;
+        PlayerTurn = true;
     }
 }

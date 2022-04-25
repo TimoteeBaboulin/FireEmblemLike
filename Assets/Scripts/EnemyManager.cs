@@ -24,6 +24,7 @@ public class EnemyManager : MonoBehaviour
     private void Awake()
     {
         Player.OnTurnChange += StartEnemyTurn;
+        Character.OnDeath += OnCharDeath;
 
         Players = new List<Character>();
         Enemies = new List<Character>();
@@ -143,5 +144,31 @@ public class EnemyManager : MonoBehaviour
         EnemyTurn = true;
         Index = 0;
         Timer = 0;
+    }
+    
+    public void OnCharDeath()
+    {
+        List<Character> cache;
+        cache = Players;
+        foreach (var character in Players)
+        {
+            if (character.health <= 0)
+            {
+                cache.Remove(character);
+            }
+        }
+
+        Players = cache;
+
+        cache = Enemies;
+        foreach (var character in Enemies)
+        {
+            if (character.health <= 0)
+            {
+                cache.Remove(character);
+            }
+        }
+
+        Enemies = cache;
     }
 }
