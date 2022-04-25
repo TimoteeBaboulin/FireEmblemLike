@@ -10,11 +10,14 @@ public class Test : MonoBehaviour
         List<Node> list = new List<Node>();
 
         Node first = new Node(Vector2Int.zero);
-        Node second = new Node(Vector2Int.zero);
+        Node second = new Node(Vector2Int.one);
         
         list.Add(first);
+        list.Add(second);
+
+        list.Remove(first);
         
-        Debug.Log(ListContainsNode(list, second));
+        Debug.Log(list[0].position);
     }
 
     bool ListContainsNode(List<Node>list, Node node)
