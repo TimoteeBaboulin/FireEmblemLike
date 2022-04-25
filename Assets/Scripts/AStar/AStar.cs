@@ -7,6 +7,8 @@ using UnityEngine.XR;
 
 public class AStar : MonoBehaviour
 {
+    public static AStar Instance;
+        
     private List<Node> Open;
     private List<Node> Closed;
 
@@ -15,6 +17,14 @@ public class AStar : MonoBehaviour
 
     public Tilemap player;
     public TileBase Path;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     public void Start()
     {
@@ -36,25 +46,20 @@ public class AStar : MonoBehaviour
 
         int iteration = 0;
 
-        while (Open[0] != null)
+        while (Open.Count>0)
         {
-            Debug.Log("1");
-
             Node current = null;
 
-            Debug.Log("2");
             foreach (var Node in Open)
             {
                 if (current == null || current.f > Node.f)
                     current = Node;
             }
-            Debug.Log(current.position);
 
             if (CheckNodesSimilarity(current, EndNode))
             {
                 List<Node> path = current.GetPath();
-                Debug.Log(path.Count);
-                
+
                 List<Vector2Int> pathInt = new List<Vector2Int>();
 
                 foreach (var node in path)
@@ -64,8 +69,6 @@ public class AStar : MonoBehaviour
 
                 return pathInt;
             }
-            
-            Debug.Log("4");
 
             List<Node> newList = Open;
 
@@ -73,8 +76,6 @@ public class AStar : MonoBehaviour
             
             Closed.Add(current);
 
-            Debug.Log("5");
-            
             foreach (var neighbor in Vector2IntExtension.neighbors) 
             {
                 Node neighboringNode = new Node(current.position + neighbor);
@@ -111,25 +112,9 @@ public class AStar : MonoBehaviour
                 Open = newList;
             }
             
-            Debug.Log("6");
         }
 
-        Debug.Log("7");
-
-        return new List<Vector2Int>();
-    }
-
-    public void Update()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            List<Vector2Int> path = GetPath(Vector2Int.zero, new Vector2Int(3, -2));
-
-            foreach (var tile in path)
-            {
-                player.SetTile((Vector3Int) tile, Path);
-            }
-        }
+        return null;
     }
     
     bool ListContainsNode(List<Node>list, Node node)

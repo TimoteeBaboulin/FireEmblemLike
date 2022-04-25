@@ -6,6 +6,11 @@ using UnityEngine.Tilemaps;
 
 public class Character : MonoBehaviour
 {
+    public enum Team
+    {
+        Player,
+        Enemy
+    }
     public static Action OnDeath;
     
     private bool HasPlayed;
@@ -18,7 +23,7 @@ public class Character : MonoBehaviour
     [Header("Character")]
     public int health;
     public int movementPoints;
-    public string team;
+    public Team team;   
     
     [Header("Weapon")]
     public Weapon weapon;

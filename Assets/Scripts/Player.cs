@@ -13,12 +13,13 @@ public class Player : MonoBehaviour
     }
 
     public static Action OnTurnChange;
-    
+
     public static Player Instance;
     public List<TileBase> numbers;
     private Tilemap NumberTilemap;
-    
-    private List<Character> Characters;
+
+    private List<Character> PlayerCharacters;
+    private List<Character> EnemyCharacters;
     private List<Command> Commands;
 
     private CommandTypes CommandSetType;
@@ -26,15 +27,12 @@ public class Player : MonoBehaviour
     private int Index;
     private Command Command;
 
-    [Header("UI")]
-    public GameObject UIObject;
-    [SerializeField]
-    private UITracking UI;
-    
+    [Header("UI")] public GameObject UIObject;
+    [SerializeField] private UITracking UI;
+
     private Vector2Int Position;
 
-    [Header("Tilemap")]
-    public Tilemap tiles;
+    [Header("Tilemap")] public Tilemap tiles;
     public Tilemap selectedTilemap;
     public TileBase redTileSprite;
     public TileBase selectedTile;
@@ -44,33 +42,39 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        EnemyManager.OnEnemyTurnEnd += EnemyTurnOver;
+        
         //Set up the different fields
         if (Player.Instance == null)
             Instance = this;
         NumberTilemap = GameObject.FindWithTag("NumberTiles").GetComponent<Tilemap>();
 
         Character.OnDeath += OnCharDeath;
-        
+
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
-        
+
         UI = UIObject.GetComponent<UITracking>();
         Commands = new List<Command>();
-        Characters = new List<Character>();
+        PlayerCharacters = new List<Character>();
+        EnemyCharacters = new List<Character>();
 
         CommandSetType = CommandTypes.None;
         Index = -1;
-        
+
         GameObject charactersParent = GameObject.FindWithTag("Characters");
         foreach (var character in charactersParent.GetComponentsInChildren<Character>())
         {
-            Characters.Add(character);
+            if (character.team == Character.Team.Player)
+                PlayerCharacters.Add(character);
+            if (character.team == Character.Team.Enemy)
+                EnemyCharacters.Add(character);
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Position = new Vector2Int();
+        Position = PlayerCharacters[0].GetPosition();
     }
 
     // Update is called once per frame
@@ -80,19 +84,13 @@ public class Player : MonoBehaviour
         {
             MoveCursor();
         }
-        
-        if (Input.GetButtonDown("Jump")) {
+
+        if (Input.GetButtonDown("Jump"))
+        {
             Select();
         }
 
         UpdateTilemap();
-    }
-
-    void setNewTile(Vector2Int oldPosition, Vector2Int newPosition)
-    {
-        tiles.SetTile((Vector3Int) oldPosition, null);
-        tiles.SetTile((Vector3Int) newPosition, redTileSprite);
-        
     }
 
     void MoveCursor()
@@ -101,14 +99,14 @@ public class Player : MonoBehaviour
             return;
 
         float horizontal = Input.GetAxis("Horizontal");
-        
+
         if (horizontal > 0)
             Position.x += 1;
         else if (horizontal < 0)
             Position.x -= 1;
 
         float vertical = Input.GetAxis("Vertical");
-        
+
         if (vertical > 0)
             Position.y += 1;
         else if (vertical < 0)
@@ -118,27 +116,32 @@ public class Player : MonoBehaviour
     void Select()
     {
         //verifies si on a deja un personnage selectionne
-        if (Index != -1 && CommandSetType != CommandTypes.None) {
-            if (CheckCommand() && Command.Execute()) {
+        if (Index != -1 && CommandSetType != CommandTypes.None)
+        {
+            if (CheckCommand() && Command.Execute())
+            {
                 Commands.Add(Command);
-                
+
                 if (!Command.undoable)
                     Commands = new List<Command>();
 
                 Command = null;
             }
-            
+
             //remets l'index pour pointer sur aucun perso
             Index = -1;
             NumberTilemap.ClearAllTiles();
             UI.gameObject.SetActive(false);
             CommandSetType = CommandTypes.None;
-        } else {
+        }
+        else
+        {
             //trouves si un personnage se trouve a l'endroit ou le pointeur est
             Index = 0;
-            foreach (var character in Characters)
+            foreach (var character in PlayerCharacters)
             {
-                if (character.GetPosition() == Position) {
+                if (character.GetPosition() == Position)
+                {
                     UI.gameObject.SetActive(true);
                     UI.Character = character.gameObject;
                     return;
@@ -146,6 +149,7 @@ public class Player : MonoBehaviour
 
                 Index++;
             }
+
             Index = -1;
         }
     }
@@ -156,7 +160,7 @@ public class Player : MonoBehaviour
         if (Commands.Count > 0)
         {
             //Undo la derniere commande
-            Commands[Commands.Count-1].Undo();
+            Commands[Commands.Count - 1].Undo();
 
             //Supprime la de la liste
             Commands.Remove(Commands[Commands.Count - 1]);
@@ -170,8 +174,9 @@ public class Player : MonoBehaviour
             }
 
             Commands = newList;
-            
+
         }
+
         Index = -1;
         UI.gameObject.SetActive(false);
         NumberTilemap.ClearAllTiles();
@@ -180,15 +185,15 @@ public class Player : MonoBehaviour
     public void SetMoveCommand()
     {
         CommandSetType = CommandTypes.Move;
-        Command = new MoveCommand(Characters[Index]);
+        Command = new MoveCommand(PlayerCharacters[Index]);
     }
 
     private void ShowMovements()
     {
-        var character = Characters[Index];
+        var character = PlayerCharacters[Index];
 
         Dictionary<Vector2Int, int> possibleMovements = character.GetPossibleMovements();
-        
+
         foreach (var tile in possibleMovements.Keys)
         {
             tiles.SetTile(new Vector3Int(tile.x, tile.y, 0), blueSquare);
@@ -209,12 +214,13 @@ public class Player : MonoBehaviour
 
         if (character.GetPlayed())
             return;
-        foreach (var charactersVar in Characters)
+        foreach (var charactersVar in PlayerCharacters)
         {
             Vector2Int characterPosition = charactersVar.GetPosition();
-            if (possibleMovements.ContainsKey(characterPosition)) {
+            if (possibleMovements.ContainsKey(characterPosition))
+            {
                 tiles.SetTile((Vector3Int) characterPosition, redTileSprite);
-                NumberTilemap.SetTile((Vector3Int)characterPosition, null);
+                NumberTilemap.SetTile((Vector3Int) characterPosition, null);
             }
         }
     }
@@ -228,14 +234,14 @@ public class Player : MonoBehaviour
         {
             ShowMovements();
         }
-        
+
         selectedTilemap.SetTile((Vector3Int) Position, selectedTile);
     }
-    
+
     public void SetAttackCommand()
     {
         CommandSetType = CommandTypes.Attack;
-        Command = new AttackCommand(Characters[Index]);
+        Command = new AttackCommand(PlayerCharacters[Index]);
     }
 
     public bool CheckCommand()
@@ -243,7 +249,7 @@ public class Player : MonoBehaviour
         switch (CommandSetType)
         {
             case CommandTypes.Move:
-                foreach (var character in Characters)
+                foreach (var character in PlayerCharacters)
                 {
                     if (character.GetPosition() == Position)
                     {
@@ -255,21 +261,24 @@ public class Player : MonoBehaviour
                         return false;
                     }
                 }
+
                 (Command as MoveCommand).SetMoveTarget(Position);
                 CommandSetType = CommandTypes.None;
                 return true;
 
             case CommandTypes.Attack:
-                foreach (var character in Characters)
+                foreach (var character in PlayerCharacters)
                 {
                     if (character == Command.user)
                         continue;
-                    if (character.GetPosition() == Position) {
+                    if (character.GetPosition() == Position)
+                    {
                         (Command as AttackCommand).target = character;
                         CommandSetType = CommandTypes.None;
                         return true;
                     }
                 }
+
                 return false;
         }
 
@@ -278,7 +287,16 @@ public class Player : MonoBehaviour
 
     public bool ContainPlayer(Vector2Int position, out Character playerIn)
     {
-        foreach (var character in Characters)
+        foreach (var character in PlayerCharacters)
+        {
+            if (character.GetPosition() == position)
+            {
+                playerIn = character;
+                return true;
+            }
+        }
+
+        foreach (var character in EnemyCharacters)
         {
             if (character.GetPosition() == position)
             {
@@ -290,15 +308,15 @@ public class Player : MonoBehaviour
         playerIn = null;
         return false;
     }
-    
+
     public bool ContainPlayer(Vector2Int position)
     {
-        foreach (var character in Characters)
+        foreach (var character in PlayerCharacters)
         {
             if (character.GetPosition() == position)
                 return true;
         }
-        
+
         return false;
     }
 
@@ -306,25 +324,27 @@ public class Player : MonoBehaviour
     {
         OnTurnChange.Invoke();
         UI.gameObject.SetActive(false);
-        Index = -1;
+        Index = 1;
         CommandSetType = CommandTypes.None;
         Command = null;
         Commands = new List<Command>();
+        NumberTilemap.ClearAllTiles();
+        tiles.ClearAllTiles();
     }
 
     public void OnCharDeath()
     {
-        foreach (var character in Characters)
+        foreach (var character in PlayerCharacters)
         {
             if (character.health <= 0)
             {
-                Characters.Remove(character);
-                Index = -1;
-                NumberTilemap.ClearAllTiles();
-                UI.gameObject.SetActive(false);
-                CommandSetType = CommandTypes.None;
-                return;
+                PlayerCharacters.Remove(character);
             }
         }
+    }
+
+    public void EnemyTurnOver()
+    {
+        Index = -1;
     }
 }
