@@ -102,18 +102,15 @@ public class EnemyManager : MonoBehaviour
             }
         }
         
-        /*Visual.ClearAllTiles();
+        Visual.ClearAllTiles();
         foreach (var tile in path)
         {
             Visual.SetTile((Vector3Int) tile, Selected);
-        }*/
+        }
 
         if (path.Count - 1 <= current.movementPoints)
         {
             AttackCommand attackCommand = new AttackCommand(current, Players[index]);
-            
-            Visual.ClearAllTiles();
-            Visual.SetTile((Vector3Int) path[path.Count-1], Selected);
 
             attackCommand.Execute(path[path.Count - 1]);
         }
@@ -127,8 +124,6 @@ public class EnemyManager : MonoBehaviour
                 if (!Player.Instance.ContainPlayer(path[current.movementPoints - x]))
                 {
                     moveCommand.SetMoveTarget(path[current.movementPoints - x]);
-                    Visual.ClearAllTiles();
-                    Visual.SetTile((Vector3Int) path[current.movementPoints - x], Selected);
                     break;
                 }
             }
