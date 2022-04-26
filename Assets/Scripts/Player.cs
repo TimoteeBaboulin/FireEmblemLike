@@ -340,28 +340,31 @@ public class Player : MonoBehaviour
 
     public void OnCharDeath()
     {
-        List<Character> cache = new List<Character>();
-        cache = PlayerCharacters;
-        foreach (var character in PlayerCharacters)
+        int index = -1;
+
+        for (int x = 0; x < PlayerCharacters.Count; x++)
         {
-            if (character.health <= 0)
+            if (PlayerCharacters[x].health <= 0)
             {
-                cache.Remove(character);
+                index = x;
             }
         }
 
-        PlayerCharacters = cache;
+        if (index != -1)
+            PlayerCharacters.Remove(PlayerCharacters[index]);
 
-        cache = EnemyCharacters;
-        foreach (var character in EnemyCharacters)
+        index = -1;
+
+        for (int x = 0; x < EnemyCharacters.Count; x++)
         {
-            if (character.health <= 0)
+            if (EnemyCharacters[x].health <= 0)
             {
-                cache.Remove(character);
+                index = x;
             }
         }
 
-        EnemyCharacters = cache;
+        if (index != -1)
+            EnemyCharacters.Remove(EnemyCharacters[index]);
     }
 
     public void EnemyTurnOver()

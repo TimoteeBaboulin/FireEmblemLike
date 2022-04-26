@@ -102,16 +102,20 @@ public class EnemyManager : MonoBehaviour
             }
         }
         
-        Visual.ClearAllTiles();
+        /*Visual.ClearAllTiles();
         foreach (var tile in path)
         {
             Visual.SetTile((Vector3Int) tile, Selected);
-        }
+        }*/
 
         if (path.Count - 1 <= current.movementPoints)
         {
             AttackCommand attackCommand = new AttackCommand(current, Players[index]);
-            attackCommand.Execute();
+            
+            Visual.ClearAllTiles();
+            Visual.SetTile((Vector3Int) path[path.Count-1], Selected);
+
+            attackCommand.Execute(path[path.Count - 1]);
         }
         else
         {
@@ -123,19 +127,24 @@ public class EnemyManager : MonoBehaviour
                 if (!Player.Instance.ContainPlayer(path[current.movementPoints - x]))
                 {
                     moveCommand.SetMoveTarget(path[current.movementPoints - x]);
+                    Visual.ClearAllTiles();
+                    Visual.SetTile((Vector3Int) path[current.movementPoints - x], Selected);
                     break;
                 }
             }
+            
+            
 
             moveCommand.Execute();
         }
 
         Index++;
-        if (Index == Enemies.Count)
+        if (Index >= Enemies.Count)
         {
             Index = 0;
             EnemyTurn = false;
             OnEnemyTurnEnd.Invoke();
+            ReloadCharacters();
         }
     }
 
@@ -148,27 +157,23 @@ public class EnemyManager : MonoBehaviour
     
     public void OnCharDeath()
     {
-        List<Character> cache;
-        cache = Players;
-        foreach (var character in Players)
+        return;
+    }
+
+    private void ReloadCharacters()
+    {
+        Players.Clear();
+        Enemies.Clear();
+
+        foreach (var character in GameObject.FindWithTag("Characters").GetComponentsInChildren<Character>())
         {
-            if (character.health <= 0)
+            if (character.team == Character.Team.Player)
             {
-                cache.Remove(character);
+                Players.Add(character);
+                continue;
             }
+            
+            Enemies.Add(character);
         }
-
-        Players = cache;
-
-        cache = Enemies;
-        foreach (var character in Enemies)
-        {
-            if (character.health <= 0)
-            {
-                cache.Remove(character);
-            }
-        }
-
-        Enemies = cache;
     }
 }
