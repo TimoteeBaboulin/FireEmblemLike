@@ -1070,7 +1070,8 @@ MonoBehaviour:
   health: 10
   movementPoints: 3
   team: 1
-  weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
+  weapon: {fileID: 11400000, guid: 4988646ad9b20a74c909254653052276, type: 2}
+  armor: {fileID: 11400000, guid: 50df84165acb2e7469929839ed92d452, type: 2}
 --- !u!1 &750940780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1797,6 +1798,7 @@ MonoBehaviour:
   movementPoints: 3
   team: 0
   weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
+  armor: {fileID: 11400000, guid: 50df84165acb2e7469929839ed92d452, type: 2}
 --- !u!95 &787252788
 Animator:
   serializedVersion: 3
@@ -4867,6 +4869,7 @@ MonoBehaviour:
   movementPoints: 3
   team: 0
   weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
+  armor: {fileID: 11400000, guid: 50df84165acb2e7469929839ed92d452, type: 2}
 --- !u!1 &1255176231
 GameObject:
   m_ObjectHideFlags: 0
@@ -7193,6 +7196,7 @@ MonoBehaviour:
   movementPoints: 3
   team: 1
   weapon: {fileID: 11400000, guid: f2753b89a64561443a68cb6c677fa9c2, type: 2}
+  armor: {fileID: 11400000, guid: 50df84165acb2e7469929839ed92d452, type: 2}
 --- !u!1 &2063268107
 GameObject:
   m_ObjectHideFlags: 0

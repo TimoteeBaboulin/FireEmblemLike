@@ -25,9 +25,13 @@ public class Character : MonoBehaviour
     public int movementPoints;
     public Team team;   
     
-    [Header("Weapon")]
+    [Header("Equipment")]
     public Weapon weapon;
-    
+    public Armor armor;
+
+    [Header("Inventory")] 
+    public Item[] inventory;
+
 
     private void Awake()
     {
@@ -38,6 +42,7 @@ public class Character : MonoBehaviour
         Player.OnTurnChange += ChangeTurn;
         
         maxMovement = movementPoints;
+        movementPoints += armor.movement;
         Text = GetComponentInChildren<TextMeshPro>();
         Text.text = health.ToString();
         
@@ -45,7 +50,6 @@ public class Character : MonoBehaviour
         Position = new Vector2(transform.position.x, transform.position.y);
     }
 
-    
     public bool Move(Vector2 direction)
     {
         Vector2Int positionInt = new Vector2Int((int) (Position.x + direction.x), (int) (Position.y + direction.y));
@@ -89,7 +93,7 @@ public class Character : MonoBehaviour
     public void GetHit(int damage, Weapon.WeaponType type)
     {
         float damageEff = weapon.GetEfficiency(type);
-        health -= Mathf.FloorToInt(damage * damageEff);
+        health -= Mathf.FloorToInt(damage * damageEff) - armor.defense;
         Text.text = health.ToString();
         if (health <= 0) {
             OnDeath.Invoke();
@@ -143,6 +147,11 @@ public class Character : MonoBehaviour
     public void ChangeTurn()
     {
         HasPlayed = false;
-        movementPoints = maxMovement;
+        movementPoints = maxMovement + armor.movement;
+    }
+
+    public bool UseItem()
+    {
+        return false;
     }
 }

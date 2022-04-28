@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6766729fcb01134c945c5cec0ca3534, type: 3}
   m_Name: Iron Axe
   m_EditorClassIdentifier: 
-  type: 0
-  damage: 0
+  type: 1
+  damage: 5
   minRange: 0
-  maxRange: 0
+  maxRange: 1
