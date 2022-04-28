@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: LeatherArmor
   m_EditorClassIdentifier: 
   defense: 2
+  movement: 1

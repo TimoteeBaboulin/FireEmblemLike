@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881406ff8f599704a99110a4b0df75de, type: 3}
   m_Name: Potion
   m_EditorClassIdentifier: 
-  name: Default Item
+  name: Potion
   healAmount: 5

@@ -150,7 +150,7 @@ public class Character : MonoBehaviour
         movementPoints = maxMovement + armor.movement;
     }
 
-    public bool UseItem()
+    public bool UseItem(int index)
     {
         return false;
     }
