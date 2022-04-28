@@ -44,7 +44,7 @@ public class AttackCommand : Command
         if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.weapon.minRange &&
             Vector2IntExtension.Distance(userPosition, targetPosition) <= user.weapon.maxRange)
         {
-            target.GetHit(user.weapon.damage);
+            target.GetHit(user.weapon.damage, user.weapon.type);
             user.Played();
             return true;
         }
@@ -55,7 +55,7 @@ public class AttackCommand : Command
             if (distance >= user.weapon.minRange && distance <= user.weapon.maxRange && !Player.Instance.ContainPlayer(movement)) {
                 if (user.Move(new Vector2((float) movement.x - userPosition.x, (float) movement.y - userPosition.y)))
                 {
-                    target.GetHit(user.weapon.damage);
+                    target.GetHit(user.weapon.damage, user.weapon.type);
                     user.Played();
 
                     return true;
@@ -85,7 +85,7 @@ public class AttackCommand : Command
         if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.weapon.minRange &&
             Vector2IntExtension.Distance(userPosition, targetPosition) <= user.weapon.maxRange)
         {
-            target.GetHit(user.weapon.damage);
+            target.GetHit(user.weapon.damage, user.weapon.type);
             user.Played();
             return true;
         }
@@ -97,7 +97,7 @@ public class AttackCommand : Command
             if (user.Move(new Vector2((float) (attackPosition.x - userPosition.x),
                 (float) (attackPosition.y - userPosition.y))))
             {
-                target.GetHit(user.weapon.damage);
+                target.GetHit(user.weapon.damage, user.weapon.type);
                 return true;
             }
         }

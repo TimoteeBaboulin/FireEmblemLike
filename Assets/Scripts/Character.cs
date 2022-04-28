@@ -86,9 +86,10 @@ public class Character : MonoBehaviour
         return true;
     }
 
-    public void GetHit(int damage)
+    public void GetHit(int damage, Weapon.WeaponType type)
     {
-        health -= damage;
+        float damageEff = weapon.GetEfficiency(type);
+        health -= Mathf.FloorToInt(damage * damageEff);
         Text.text = health.ToString();
         if (health <= 0) {
             OnDeath.Invoke();
