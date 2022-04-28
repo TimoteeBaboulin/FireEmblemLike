@@ -65,10 +65,12 @@ public class EnemyManager : MonoBehaviour
 
         Dictionary<Vector2Int, int> possibleMovement = current.GetPossibleMovements();
 
-        List<Vector2Int> attackPositions = new List<Vector2Int>();
+        Dictionary<Vector2Int, int> attackPositions = new Dictionary<Vector2Int, int>();
 
+        int _index = -1;
         foreach (var player in Players)
         {
+            _index++;
             foreach (var neighbor in Vector2IntExtension.neighbors)
             {
                 Character blockingPlayer;
@@ -78,10 +80,10 @@ public class EnemyManager : MonoBehaviour
                     continue;
                 }
                 
-                if (attackPositions.Contains(player.GetPosition()+neighbor))
+                if (attackPositions.ContainsKey(player.GetPosition()+neighbor))
                     continue;
                 Debug.Log("1");
-                attackPositions.Add(player.GetPosition() + neighbor);
+                attackPositions.Add(player.GetPosition() + neighbor, _index);
             }
         }
 
@@ -90,18 +92,18 @@ public class EnemyManager : MonoBehaviour
 
         List<Vector2Int> path = new List<Vector2Int>();
 
-        for (int x = 0; x < attackPositions.Count; x++)
+        foreach (Vector2Int attackPos in attackPositions.Keys)
         {
-            List<Vector2Int> newPath = ASharp.GetPath(current.GetPosition(), attackPositions[x]);
+            List<Vector2Int> newPath = ASharp.GetPath(current.GetPosition(), attackPos);
 
             if (newPath != null && newPath.Count < distance)
             {
                 path = newPath;
                 distance = path.Count;
-                index = x;
+                index = attackPositions[attackPos];
             }
         }
-        
+
         Visual.ClearAllTiles();
         foreach (var tile in path)
         {
@@ -117,8 +119,7 @@ public class EnemyManager : MonoBehaviour
         else
         {
             MoveCommand moveCommand = new MoveCommand(current.GetPosition(), current);
-
-            moveCommand.SetMoveTarget(path[current.movementPoints]);
+            
             for (int x = 0; x < current.movementPoints; x++)
             {
                 if (!Player.Instance.ContainPlayer(path[current.movementPoints - x]))
@@ -127,8 +128,6 @@ public class EnemyManager : MonoBehaviour
                     break;
                 }
             }
-            
-            
 
             moveCommand.Execute();
         }
