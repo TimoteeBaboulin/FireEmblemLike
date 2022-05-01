@@ -27,6 +27,7 @@ public class AttackCommand : Command
     
     public bool Execute()
     {
+        Debug.Log("Execute working");
         if (target == null)
             return false;
 
@@ -41,10 +42,10 @@ public class AttackCommand : Command
         
         Dictionary<Vector2Int,int> possibleMovements = user.GetPossibleMovements();
 
-        if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.weapon.minRange &&
-            Vector2IntExtension.Distance(userPosition, targetPosition) <= user.weapon.maxRange)
+        if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.Weapon.minRange &&
+            Vector2IntExtension.Distance(userPosition, targetPosition) <= user.Weapon.maxRange)
         {
-            target.GetHit(user.weapon.damage, user.weapon.type);
+            target.GetHit(user.Weapon.damage, user.Weapon.type);
             user.Played();
             return true;
         }
@@ -52,10 +53,10 @@ public class AttackCommand : Command
         foreach (var movement in possibleMovements.Keys)
         {
             int distance = Vector2IntExtension.Distance(movement, targetPosition);
-            if (distance >= user.weapon.minRange && distance <= user.weapon.maxRange && !Player.Instance.ContainPlayer(movement)) {
+            if (distance >= user.Weapon.minRange && distance <= user.Weapon.maxRange && !Player.Instance.ContainPlayer(movement)) {
                 if (user.Move(new Vector2((float) movement.x - userPosition.x, (float) movement.y - userPosition.y)))
                 {
-                    target.GetHit(user.weapon.damage, user.weapon.type);
+                    target.GetHit(user.Weapon.damage, user.Weapon.type);
                     user.Played();
 
                     return true;
@@ -82,22 +83,22 @@ public class AttackCommand : Command
         
         Dictionary<Vector2Int,int> possibleMovements = user.GetPossibleMovements();
 
-        if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.weapon.minRange &&
-            Vector2IntExtension.Distance(userPosition, targetPosition) <= user.weapon.maxRange)
+        if (Vector2IntExtension.Distance(userPosition, targetPosition) >= user.Weapon.minRange &&
+            Vector2IntExtension.Distance(userPosition, targetPosition) <= user.Weapon.maxRange)
         {
-            target.GetHit(user.weapon.damage, user.weapon.type);
+            target.GetHit(user.Weapon.damage, user.Weapon.type);
             user.Played();
             return true;
         }
 
         if (possibleMovements.ContainsKey(attackPosition) &&
-            Vector2IntExtension.Distance(attackPosition, targetPosition) >= user.weapon.minRange &&
-            Vector2IntExtension.Distance(attackPosition, targetPosition) <= user.weapon.maxRange)
+            Vector2IntExtension.Distance(attackPosition, targetPosition) >= user.Weapon.minRange &&
+            Vector2IntExtension.Distance(attackPosition, targetPosition) <= user.Weapon.maxRange)
         {
             if (user.Move(new Vector2((float) (attackPosition.x - userPosition.x),
                 (float) (attackPosition.y - userPosition.y))))
             {
-                target.GetHit(user.weapon.damage, user.weapon.type);
+                target.GetHit(user.Weapon.damage, user.Weapon.type);
                 return true;
             }
         }

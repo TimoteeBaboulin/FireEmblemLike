@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
 
     private CommandTypes CommandSetType;
 
+    private Vector2Int _CameraPosition;
     private int Index;
     private Command Command;
 
@@ -44,6 +45,10 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        Vector3Int cameraPos = new Vector3Int((int) Camera.main.transform.position.x, (int) Camera.main.transform.position.y,
+            (int) Camera.main.transform.position.z);
+        _CameraPosition = (Vector2Int) cameraPos;
+        
         PlayerTurn = true;
         EnemyManager.OnEnemyTurnEnd += EnemyTurnOver;
         
@@ -116,6 +121,19 @@ public class Player : MonoBehaviour
             Position.y += 1;
         else if (vertical < 0)
             Position.y -= 1;
+
+        if (Position.x > _CameraPosition.x + 5)
+            _CameraPosition.x ++;
+        else if (Position.x < _CameraPosition.x - 5)
+            _CameraPosition.x --;
+
+        if (Position.y > _CameraPosition.y + 2)
+            _CameraPosition.y++;
+        else if (Position.y < _CameraPosition.y - 2)
+            _CameraPosition.y--;
+
+        Vector3 newCameraPos = new Vector3(_CameraPosition.x, _CameraPosition.y + 0.5f, -1);
+        Camera.main.transform.position = newCameraPos;
     }
 
     void Select()
@@ -228,6 +246,16 @@ public class Player : MonoBehaviour
                 NumberTilemap.SetTile((Vector3Int) characterPosition, null);
             }
         }
+        
+        foreach (var enemy in EnemyCharacters)
+        {
+            Vector2Int characterPosition = enemy.GetPosition();
+            if (possibleMovements.ContainsKey(characterPosition))
+            {
+                tiles.SetTile((Vector3Int) characterPosition, redTileSprite);
+                NumberTilemap.SetTile((Vector3Int) characterPosition, null);
+            }
+        }
     }
 
     private void UpdateTilemap()
@@ -266,13 +294,26 @@ public class Player : MonoBehaviour
                         return false;
                     }
                 }
+                
+                foreach (var character in EnemyCharacters)
+                {
+                    if (character.GetPosition() == Position)
+                    {
+                        CommandSetType = CommandTypes.None;
+                        Command = null;
+                        UI.gameObject.SetActive(false);
+                        NumberTilemap.ClearAllTiles();
+                        Index = -1;
+                        return false;
+                    }
+                }
 
                 (Command as MoveCommand).SetMoveTarget(Position);
                 CommandSetType = CommandTypes.None;
                 return true;
 
             case CommandTypes.Attack:
-                foreach (var character in PlayerCharacters)
+                foreach (var character in EnemyCharacters)
                 {
                     if (character == Command.user)
                         continue;
@@ -365,6 +406,10 @@ public class Player : MonoBehaviour
 
         if (index != -1)
             EnemyCharacters.Remove(EnemyCharacters[index]);
+
+        /*if (PlayerCharacters.Count == 0)
+        */
+            
     }
 
     public void EnemyTurnOver()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Character : MonoBehaviour
@@ -25,9 +26,9 @@ public class Character : MonoBehaviour
     public int movementPoints;
     public Team team;   
     
-    [Header("Equipment")]
-    public Weapon weapon;
-    public Armor armor;
+    [FormerlySerializedAs("weapon")] [Header("Equipment")]
+    public Weapon Weapon;
+    [FormerlySerializedAs("armor")] public Armor Armor;
 
     [Header("Inventory")] 
     public Item[] inventory;
@@ -36,13 +37,13 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         GetComponent<SpriteRenderer>().sprite =
-            Resources.Load<Sprite>("Characters/" + weapon.type.ToString().ToLower() + ".png");
+            Resources.Load<Sprite>("Characters/" + Weapon.type.ToString().ToLower() + ".png");
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
 
         Player.OnTurnChange += ChangeTurn;
         
         maxMovement = movementPoints;
-        movementPoints += armor.movement;
+        movementPoints += Armor.movement;
         Text = GetComponentInChildren<TextMeshPro>();
         Text.text = health.ToString();
         
@@ -92,8 +93,8 @@ public class Character : MonoBehaviour
 
     public void GetHit(int damage, Weapon.WeaponType type)
     {
-        float damageEff = weapon.GetEfficiency(type);
-        health -= Mathf.FloorToInt(damage * damageEff) - armor.defense;
+        float damageEff = Weapon.GetEfficiency(type);
+        health -= Mathf.FloorToInt(damage * damageEff) - Armor.defense;
         Text.text = health.ToString();
         if (health <= 0) {
             OnDeath.Invoke();
@@ -106,6 +107,7 @@ public class Character : MonoBehaviour
         Dictionary<Vector2Int, int> movementMap = new Dictionary<Vector2Int, int>();
         movementMap.Add(GetPosition(), 0);
         Tilemap walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
+        Tilemap ground = GameObject.FindWithTag("Ground").GetComponent<Tilemap>();
 
         for (int x = 0; x < movementPoints; x++)
         {
@@ -117,7 +119,8 @@ public class Character : MonoBehaviour
                 foreach (var neighbor in Vector2IntExtension.neighbors)
                 {
                     if (!movementMap.ContainsKey(movement.Key + neighbor) &&
-                        walls.GetTile((Vector3Int) (movement.Key + neighbor)) == null) 
+                        walls.GetTile((Vector3Int) (movement.Key + neighbor)) == null &&
+                        ground.GetTile((Vector3Int) (movement.Key + neighbor)) != null) 
                     {
                         newList.Add(movement.Key + neighbor);
                     }
@@ -147,11 +150,24 @@ public class Character : MonoBehaviour
     public void ChangeTurn()
     {
         HasPlayed = false;
-        movementPoints = maxMovement + armor.movement;
+        movementPoints = maxMovement + Armor.movement;
     }
 
     public bool UseItem(int index)
     {
         return false;
+    }
+
+    public bool ChangeEquipment(Armor armor)
+    {
+        Armor = armor;
+        movementPoints = maxMovement + Armor.movement;
+        return true;
+    }
+    
+    public bool ChangeEquipment(Weapon weapon)
+    {
+        Weapon = weapon;
+        return true;
     }
 }

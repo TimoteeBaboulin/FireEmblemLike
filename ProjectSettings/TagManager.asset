@@ -8,6 +8,7 @@ TagManager:
   - UI
   - Walls
   - NumberTiles
+  - Ground
   layers:
   - Default
   - TransparentFX

@@ -25,10 +25,11 @@ public class Weapon : ScriptableObject
         if (type == Weapon.WeaponType.Sword && _type == Weapon.WeaponType.Spear
             || type == Weapon.WeaponType.Spear && _type == Weapon.WeaponType.Axe
             || type == Weapon.WeaponType.Axe && _type == Weapon.WeaponType.Sword)
-            return 2;
+            return 1.5f;
+        
         if (type == _type)
             return 1;
 
-        return 0.5f;
+        return 0.75f;
     }
 }
