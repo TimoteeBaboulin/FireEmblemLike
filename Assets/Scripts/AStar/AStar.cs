@@ -44,8 +44,6 @@ public class AStar : MonoBehaviour
         
         Open.Add(StartNode);
 
-        int iteration = 0;
-
         while (Open.Count>0)
         {
             Node current = null;

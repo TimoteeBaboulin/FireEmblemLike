@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -16,39 +17,85 @@ public class Character : MonoBehaviour
     
     private bool HasPlayed;
     private Vector2 Position;
-    private TextMeshPro Text;
 
-    private int maxMovement;
+    [NonSerialized]public int maxMovement;
     private Tilemap Walls;
-
+    [NonSerialized]public int MaxHealth;
+    
     [Header("Character")]
-    public int health;
-    public int movementPoints;
+    public int health = 10;
+    public int movementPoints = 3;
     public Team team;   
     
-    [FormerlySerializedAs("weapon")] [Header("Equipment")]
-    public Weapon Weapon;
-    [FormerlySerializedAs("armor")] public Armor Armor;
-
-    [Header("Inventory")] 
-    public Item[] inventory;
-
+    [Header("Equipment")]
+    public Weapon _Weapon;
+    public Armor _Armor;
 
     private void Awake()
     {
-        GetComponent<SpriteRenderer>().sprite =
-            Resources.Load<Sprite>("Characters/" + Weapon.type.ToString().ToLower() + ".png");
-        Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
-
         Player.OnTurnChange += ChangeTurn;
-        
+    }
+
+    private void LoadStats()
+    {
+        MaxHealth = health;
         maxMovement = movementPoints;
-        movementPoints += Armor.movement;
-        Text = GetComponentInChildren<TextMeshPro>();
-        Text.text = health.ToString();
-        
         HasPlayed = false;
         Position = new Vector2(transform.position.x, transform.position.y);
+    }
+
+    public void LoadGear(Weapon weapon, Armor armor, Team _team)
+    {
+        LoadStats();
+        
+        ChangeEquipment(weapon);
+        ChangeEquipment(armor);
+        team = _team;
+        
+        AnimatorOverrideController controller = GetController();
+        
+        if (controller == null)
+            return;
+
+        GetComponent<Animator>().runtimeAnimatorController = controller;
+    }
+    
+    private AnimatorOverrideController GetController()
+    {
+        if (team == Team.Enemy && _Weapon.type == Weapon.WeaponType.Axe)
+            return null;
+        
+        string path = "Animation/InGame/";
+
+        switch (team)
+        {
+            case Team.Enemy:
+                path += "Enemy";
+                break;
+            case Team.Player:
+                path += "Player";
+                break;
+        }
+
+        switch (_Weapon.type)
+        {
+            case Weapon.WeaponType.Axe:
+                path += "Axe";
+                break;
+            
+            case Weapon.WeaponType.Spear:
+                path += "Spear";
+                break;
+            
+            case Weapon.WeaponType.Sword:
+                path += "Sword";
+                break;
+        }
+
+        AnimatorOverrideController controller = Resources.Load<AnimatorOverrideController>(path);
+        
+        Debug.Log(controller == null);
+        return controller;
     }
 
     public bool Move(Vector2 direction)
@@ -93,13 +140,17 @@ public class Character : MonoBehaviour
 
     public void GetHit(int damage, Weapon.WeaponType type)
     {
-        float damageEff = Weapon.GetEfficiency(type);
-        health -= Mathf.FloorToInt(damage * damageEff) - Armor.defense;
-        Text.text = health.ToString();
+        float damageEff = _Weapon.GetEfficiency(type);
+        int trueDamage = Mathf.FloorToInt(damage * damageEff) - _Armor.defense;
+        if (trueDamage <= 0)
+            trueDamage = 1;
+        health -= trueDamage;
         if (health <= 0) {
             OnDeath.Invoke();
             Destroy(gameObject);
         }
+        
+        gameObject.GetComponentInChildren<HealthBar>().UpdateHealth(this);
     }
 
     public Dictionary<Vector2Int, int> GetPossibleMovements()
@@ -150,24 +201,20 @@ public class Character : MonoBehaviour
     public void ChangeTurn()
     {
         HasPlayed = false;
-        movementPoints = maxMovement + Armor.movement;
+        if (_Armor == null)
+            Debug.Log("WHAT THE FUCK IS WRONG");
+        movementPoints = maxMovement + _Armor.movement;
     }
-
-    public bool UseItem(int index)
-    {
-        return false;
-    }
-
     public bool ChangeEquipment(Armor armor)
     {
-        Armor = armor;
-        movementPoints = maxMovement + Armor.movement;
+        _Armor = armor;
+        movementPoints = maxMovement + _Armor.movement;
         return true;
     }
     
     public bool ChangeEquipment(Weapon weapon)
     {
-        Weapon = weapon;
+        _Weapon = weapon;
         return true;
     }
 }

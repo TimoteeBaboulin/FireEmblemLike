@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,21 +17,15 @@ public class EnemyManager : MonoBehaviour
     private int Index;
 
     public Tilemap Walls;
-    
-    [Header("Visuals")]
-    public Tilemap Visual;
-    public TileBase Selected;
-    
+
     private void Awake()
     {
         Player.OnTurnChange += StartEnemyTurn;
-        Character.OnDeath += OnCharDeath;
 
         Players = new List<Character>();
         Enemies = new List<Character>();
 
         EnemyTurn = false;
-        Visual.color = Color.cyan;
         
         foreach (var character in GameObject.FindWithTag("Characters").GetComponentsInChildren<Character>())
         {
@@ -63,6 +58,8 @@ public class EnemyManager : MonoBehaviour
     {
         Character current = Enemies[Index];
 
+        Camera.main.GetComponent<CameraMovement>().ForcePosition(current.GetPosition());
+        
         Dictionary<Vector2Int, int> possibleMovement = current.GetPossibleMovements();
 
         Dictionary<Vector2Int, int> attackPositions = new Dictionary<Vector2Int, int>();
@@ -104,12 +101,6 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        Visual.ClearAllTiles();
-        foreach (var tile in path)
-        {
-            Visual.SetTile((Vector3Int) tile, Selected);
-        }
-
         if (path.Count - 1 <= current.movementPoints)
         {
             AttackCommand attackCommand = new AttackCommand(current, Players[index]);
@@ -137,21 +128,30 @@ public class EnemyManager : MonoBehaviour
         {
             Index = 0;
             EnemyTurn = false;
-            OnEnemyTurnEnd.Invoke();
+            StartCoroutine(WaitBeforeEnemyTurn());
             ReloadCharacters();
         }
     }
 
+    IEnumerator WaitBeforeEnemyTurn()
+    {
+        float timer = 0f;
+
+        while (timer < 1)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        
+        OnEnemyTurnEnd.Invoke();
+    }
+
     private void StartEnemyTurn()
     {
+        ReloadCharacters();
         EnemyTurn = true;
         Index = 0;
         Timer = 0;
-    }
-    
-    public void OnCharDeath()
-    {
-        return;
     }
 
     private void ReloadCharacters()

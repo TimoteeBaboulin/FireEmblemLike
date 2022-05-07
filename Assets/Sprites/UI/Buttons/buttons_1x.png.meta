@@ -22,7 +22,7 @@ TextureImporter:
     second: buttons_1x_5
   - first:
       213: -1262403714452437528
-    second: buttons_1x_6
+    second: Arrow_Right
   - first:
       213: -3774606656612179167
     second: buttons_1x_7
@@ -34,7 +34,7 @@ TextureImporter:
     second: buttons_1x_9
   - first:
       213: -1679855700415271712
-    second: buttons_1x_10
+    second: ArrowLeft
   - first:
       213: 4335348234200388949
     second: buttons_1x_11
@@ -256,13 +256,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: buttons_1x_6
+      name: Arrow_Right
       rect:
         serializedVersion: 2
-        x: 97
+        x: 99
         y: 1
-        width: 6
-        height: 14
+        width: 4
+        height: 6
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -340,7 +340,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: buttons_1x_10
+      name: ArrowLeft
       rect:
         serializedVersion: 2
         x: 105
