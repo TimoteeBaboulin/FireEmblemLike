@@ -58,8 +58,6 @@ public class EnemyManager : MonoBehaviour
     {
         Character current = Enemies[Index];
 
-        Camera.main.GetComponent<CameraMovement>().ForcePosition(current.GetPosition());
-        
         Dictionary<Vector2Int, int> possibleMovement = current.GetPossibleMovements();
 
         Dictionary<Vector2Int, int> attackPositions = new Dictionary<Vector2Int, int>();
@@ -123,6 +121,8 @@ public class EnemyManager : MonoBehaviour
             moveCommand.Execute();
         }
 
+        Camera.main.GetComponent<CameraMovement>().ForcePosition(current.GetPosition());
+        
         Index++;
         if (Index >= Enemies.Count)
         {

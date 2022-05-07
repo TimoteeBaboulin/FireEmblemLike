@@ -68,7 +68,7 @@ public class CharacterSpawner : MonoBehaviour
     {
         GameObject player = Instantiate(PlayerPrefab, CharacterParent.transform);
         player.transform.position = position;
-        player.GetComponent<Character>().movementPoints = 3;
+        player.GetComponent<Character>().movementPoints = 5;
 
         string Class = PlayerPrefs.GetString("Class" + _Index);
 

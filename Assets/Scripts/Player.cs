@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
@@ -220,11 +221,6 @@ public class Player : MonoBehaviour
                 tiles.SetTile((Vector3Int) tile, redTileSprite);
             else
                 tiles.SetTile(new Vector3Int(tile.x, tile.y, 0), blueSquare);
-            
-            if (possibleMovements[tile] != 0)
-            {
-                NumberTilemap.SetTile((Vector3Int) tile, numbers[possibleMovements[tile] - 1]);
-            }
 
             Character characterIn;
             if (ContainPlayer(tile, out characterIn) && characterIn != CharacterChosen)
@@ -359,9 +355,17 @@ public class Player : MonoBehaviour
         if (index != -1)
             EnemyCharacters.Remove(EnemyCharacters[index]);
 
-        /*if (PlayerCharacters.Count == 0)
-        */
-            
+        if (EnemyCharacters.Count == 0)
+        {
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            SceneManager.LoadScene("Congratulations");
+        }
+
+        if (PlayerCharacters.Count == 0)
+        {
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            SceneManager.LoadScene("Game Over");
+        }
     }
 
     public void EnemyTurnOver()
