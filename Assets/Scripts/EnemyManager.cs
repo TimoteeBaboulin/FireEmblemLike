@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,21 +17,15 @@ public class EnemyManager : MonoBehaviour
     private int Index;
 
     public Tilemap Walls;
-    
-    [Header("Visuals")]
-    public Tilemap Visual;
-    public TileBase Selected;
-    
+
     private void Awake()
     {
         Player.OnTurnChange += StartEnemyTurn;
-        Character.OnDeath += OnCharDeath;
 
         Players = new List<Character>();
         Enemies = new List<Character>();
 
         EnemyTurn = false;
-        Visual.color = Color.cyan;
         
         foreach (var character in GameObject.FindWithTag("Characters").GetComponentsInChildren<Character>())
         {
@@ -65,10 +60,12 @@ public class EnemyManager : MonoBehaviour
 
         Dictionary<Vector2Int, int> possibleMovement = current.GetPossibleMovements();
 
-        List<Vector2Int> attackPositions = new List<Vector2Int>();
+        Dictionary<Vector2Int, int> attackPositions = new Dictionary<Vector2Int, int>();
 
+        int _index = -1;
         foreach (var player in Players)
         {
+            _index++;
             foreach (var neighbor in Vector2IntExtension.neighbors)
             {
                 Character blockingPlayer;
@@ -78,10 +75,10 @@ public class EnemyManager : MonoBehaviour
                     continue;
                 }
                 
-                if (attackPositions.Contains(player.GetPosition()+neighbor))
+                if (attackPositions.ContainsKey(player.GetPosition()+neighbor))
                     continue;
                 Debug.Log("1");
-                attackPositions.Add(player.GetPosition() + neighbor);
+                attackPositions.Add(player.GetPosition() + neighbor, _index);
             }
         }
 
@@ -90,22 +87,16 @@ public class EnemyManager : MonoBehaviour
 
         List<Vector2Int> path = new List<Vector2Int>();
 
-        for (int x = 0; x < attackPositions.Count; x++)
+        foreach (Vector2Int attackPos in attackPositions.Keys)
         {
-            List<Vector2Int> newPath = ASharp.GetPath(current.GetPosition(), attackPositions[x]);
+            List<Vector2Int> newPath = ASharp.GetPath(current.GetPosition(), attackPos);
 
             if (newPath != null && newPath.Count < distance)
             {
                 path = newPath;
                 distance = path.Count;
-                index = x;
+                index = attackPositions[attackPos];
             }
-        }
-        
-        Visual.ClearAllTiles();
-        foreach (var tile in path)
-        {
-            Visual.SetTile((Vector3Int) tile, Selected);
         }
 
         if (path.Count - 1 <= current.movementPoints)
@@ -117,8 +108,7 @@ public class EnemyManager : MonoBehaviour
         else
         {
             MoveCommand moveCommand = new MoveCommand(current.GetPosition(), current);
-
-            moveCommand.SetMoveTarget(path[current.movementPoints]);
+            
             for (int x = 0; x < current.movementPoints; x++)
             {
                 if (!Player.Instance.ContainPlayer(path[current.movementPoints - x]))
@@ -127,32 +117,41 @@ public class EnemyManager : MonoBehaviour
                     break;
                 }
             }
-            
-            
 
             moveCommand.Execute();
         }
 
+        Camera.main.GetComponent<CameraMovement>().ForcePosition(current.GetPosition());
+        
         Index++;
         if (Index >= Enemies.Count)
         {
             Index = 0;
             EnemyTurn = false;
-            OnEnemyTurnEnd.Invoke();
+            StartCoroutine(WaitBeforeEnemyTurn());
             ReloadCharacters();
         }
     }
 
+    IEnumerator WaitBeforeEnemyTurn()
+    {
+        float timer = 0f;
+
+        while (timer < 1)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        
+        OnEnemyTurnEnd.Invoke();
+    }
+
     private void StartEnemyTurn()
     {
+        ReloadCharacters();
         EnemyTurn = true;
         Index = 0;
         Timer = 0;
-    }
-    
-    public void OnCharDeath()
-    {
-        return;
     }
 
     private void ReloadCharacters()

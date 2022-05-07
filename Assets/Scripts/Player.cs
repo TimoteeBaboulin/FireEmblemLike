@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
@@ -17,6 +18,8 @@ public class Player : MonoBehaviour
     public static Player Instance;
 
     private bool PlayerTurn;
+    private bool _CursorPause;
+    
     public List<TileBase> numbers;
     private Tilemap NumberTilemap;
 
@@ -25,12 +28,11 @@ public class Player : MonoBehaviour
     private List<Command> Commands;
 
     private CommandTypes CommandSetType;
-
-    private int Index;
+    
+    private Character CharacterChosen;
     private Command Command;
-
-    [Header("UI")] public GameObject UIObject;
-    [SerializeField] private UITracking UI;
+    
+    private UITracking UI;
 
     private Vector2Int Position;
 
@@ -44,27 +46,41 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        _CursorPause = false;
+        
         PlayerTurn = true;
         EnemyManager.OnEnemyTurnEnd += EnemyTurnOver;
         
         //Set up the different fields
         if (Player.Instance == null)
             Instance = this;
-        NumberTilemap = GameObject.FindWithTag("NumberTiles").GetComponent<Tilemap>();
+
+        GameObject tilemaps = new GameObject();
+        tilemaps.AddComponent<Tilemap>();
+        NumberTilemap = tilemaps.GetComponent<Tilemap>();
 
         Character.OnDeath += OnCharDeath;
 
         Walls = GameObject.FindWithTag("Walls").GetComponent<Tilemap>();
 
-        UI = UIObject.GetComponent<UITracking>();
+        UI = GameObject.FindWithTag("UI").GetComponent<UITracking>();
+        UI.gameObject.SetActive(false);
+        
         Commands = new List<Command>();
-        PlayerCharacters = new List<Character>();
-        EnemyCharacters = new List<Character>();
 
         CommandSetType = CommandTypes.None;
-        Index = -1;
+        CharacterChosen = null;
+        
+        PlayerCharacters = new List<Character>();
+        EnemyCharacters = new List<Character>();
+        
+    }
 
+    // Start is called before the first frame update
+    void Start()
+    {
         GameObject charactersParent = GameObject.FindWithTag("Characters");
+        
         foreach (var character in charactersParent.GetComponentsInChildren<Character>())
         {
             if (character.team == Character.Team.Player)
@@ -72,12 +88,10 @@ public class Player : MonoBehaviour
             if (character.team == Character.Team.Enemy)
                 EnemyCharacters.Add(character);
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        
         Position = PlayerCharacters[0].GetPosition();
+        
+        Camera.main.GetComponent<CameraMovement>().SetPosition(Position);
     }
 
     // Update is called once per frame
@@ -87,7 +101,8 @@ public class Player : MonoBehaviour
             return;
         if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical"))
         {
-            MoveCursor();
+            if (!_CursorPause)
+                MoveCursor();
         }
 
         if (Input.GetButtonDown("Jump"))
@@ -100,9 +115,6 @@ public class Player : MonoBehaviour
 
     void MoveCursor()
     {
-        if (Index != -1 && CommandSetType == CommandTypes.None)
-            return;
-
         float horizontal = Input.GetAxis("Horizontal");
 
         if (horizontal > 0)
@@ -116,51 +128,52 @@ public class Player : MonoBehaviour
             Position.y += 1;
         else if (vertical < 0)
             Position.y -= 1;
+        
+        Camera.main.GetComponent<CameraMovement>().SetGoal(Position);
     }
 
-    void Select()
+    void HandleCommand()
     {
-        //verifies si on a deja un personnage selectionne
-        if (Index != -1 && CommandSetType != CommandTypes.None)
+        if (CheckCommand())
         {
-            if (CheckCommand() && Command.Execute())
-            {
+            Command.Execute();
+            
+            if (!Command.undoable)
+                Commands.Clear();
+            else
                 Commands.Add(Command);
 
-                if (!Command.undoable)
-                    Commands = new List<Command>();
-
-                Command = null;
-            }
-
-            //remets l'index pour pointer sur aucun perso
-            Index = -1;
-            NumberTilemap.ClearAllTiles();
-            UI.gameObject.SetActive(false);
-            CommandSetType = CommandTypes.None;
+            Command = null;
+        }
+        
+        ResetCharacterChosen();
+    }
+    
+    void Select()
+    {
+        if (CharacterChosen != null && CommandSetType == CommandTypes.None)
+            return;
+        //verifies si on a deja un personnage selectionne
+        if (CharacterChosen != null && CommandSetType != CommandTypes.None)
+        {
+            HandleCommand();
         }
         else
         {
-            //trouves si un personnage se trouve a l'endroit ou le pointeur est
-            Index = 0;
-            foreach (var character in PlayerCharacters)
+            if (ContainPlayer(Position, out Character character))
             {
-                if (character.GetPosition() == Position)
-                {
-                    UI.gameObject.SetActive(true);
-                    UI.Character = character.gameObject;
-                    return;
-                }
-
-                Index++;
+                CharacterChosen = character;
+                _CursorPause = true;
+                UI.gameObject.SetActive(true);
+                UI._Character = character.gameObject;
+                UI.CalculateButtons();
             }
-
-            Index = -1;
         }
     }
 
     public void Undo()
     {
+        ResetUI();
         //verifies qu'il y ait des commandes dans la liste
         if (Commands.Count > 0)
         {
@@ -182,50 +195,41 @@ public class Player : MonoBehaviour
 
         }
 
-        Index = -1;
-        UI.gameObject.SetActive(false);
-        NumberTilemap.ClearAllTiles();
+        ResetCharacterChosen();
     }
 
     public void SetMoveCommand()
     {
+        ResetUI();
         CommandSetType = CommandTypes.Move;
-        Command = new MoveCommand(PlayerCharacters[Index]);
+        Command = new MoveCommand(CharacterChosen);
+        _CursorPause = false;
     }
 
     private void ShowMovements()
     {
-        var character = PlayerCharacters[Index];
-
-        Dictionary<Vector2Int, int> possibleMovements = character.GetPossibleMovements();
+        if (CharacterChosen.GetPlayed()) {
+            tiles.SetTile((Vector3Int) CharacterChosen.GetPosition(), redTileSprite);
+            return;
+        }
+        
+        Dictionary<Vector2Int, int> possibleMovements = CharacterChosen.GetPossibleMovements();
 
         foreach (var tile in possibleMovements.Keys)
         {
-            tiles.SetTile(new Vector3Int(tile.x, tile.y, 0), blueSquare);
-            if (possibleMovements[tile] != 0)
-            {
-                NumberTilemap.SetTile((Vector3Int) tile, numbers[possibleMovements[tile] - 1]);
-            }
+            if (ContainPlayer(tile))
+                tiles.SetTile((Vector3Int) tile, redTileSprite);
+            else
+                tiles.SetTile(new Vector3Int(tile.x, tile.y, 0), blueSquare);
 
             Character characterIn;
-            if (character.GetPlayed() || (ContainPlayer(tile, out characterIn) && characterIn != character))
+            if (ContainPlayer(tile, out characterIn) && characterIn != CharacterChosen)
                 continue;
+            
             foreach (var neighbor in Vector2IntExtension.neighbors)
             {
                 if (!possibleMovements.ContainsKey(tile + neighbor))
                     tiles.SetTile((Vector3Int) (tile + neighbor), redTileSprite);
-            }
-        }
-
-        if (character.GetPlayed())
-            return;
-        foreach (var charactersVar in PlayerCharacters)
-        {
-            Vector2Int characterPosition = charactersVar.GetPosition();
-            if (possibleMovements.ContainsKey(characterPosition))
-            {
-                tiles.SetTile((Vector3Int) characterPosition, redTileSprite);
-                NumberTilemap.SetTile((Vector3Int) characterPosition, null);
             }
         }
     }
@@ -235,7 +239,7 @@ public class Player : MonoBehaviour
         tiles.ClearAllTiles();
         selectedTilemap.ClearAllTiles();
 
-        if (Index != -1)
+        if (CharacterChosen != null)
         {
             ShowMovements();
         }
@@ -246,7 +250,9 @@ public class Player : MonoBehaviour
     public void SetAttackCommand()
     {
         CommandSetType = CommandTypes.Attack;
-        Command = new AttackCommand(PlayerCharacters[Index]);
+        Command = new AttackCommand(CharacterChosen);
+        _CursorPause = false;
+        ResetUI();
     }
 
     public bool CheckCommand()
@@ -254,36 +260,18 @@ public class Player : MonoBehaviour
         switch (CommandSetType)
         {
             case CommandTypes.Move:
-                foreach (var character in PlayerCharacters)
-                {
-                    if (character.GetPosition() == Position)
-                    {
-                        CommandSetType = CommandTypes.None;
-                        Command = null;
-                        UI.gameObject.SetActive(false);
-                        NumberTilemap.ClearAllTiles();
-                        Index = -1;
-                        return false;
-                    }
-                }
-
+                if (ContainPlayer(Position))
+                    return false;
+                
                 (Command as MoveCommand).SetMoveTarget(Position);
                 CommandSetType = CommandTypes.None;
                 return true;
 
             case CommandTypes.Attack:
-                foreach (var character in PlayerCharacters)
-                {
-                    if (character == Command.user)
-                        continue;
-                    if (character.GetPosition() == Position)
-                    {
-                        (Command as AttackCommand).target = character;
-                        CommandSetType = CommandTypes.None;
-                        return true;
-                    }
+                if (ContainPlayer(Position, out Character character) && character != CharacterChosen) {
+                    (Command as AttackCommand).target = character;
+                    return true;
                 }
-
                 return false;
         }
 
@@ -322,20 +310,21 @@ public class Player : MonoBehaviour
                 return true;
         }
 
+        foreach (var character in EnemyCharacters)
+        {
+            if (character.GetPosition() == position)
+                return true;
+        }
+        
         return false;
     }
 
     public void ChangeTurn()
     {
+        ResetCharacterChosen();
         PlayerTurn = false;
         OnTurnChange.Invoke();
-        UI.gameObject.SetActive(false);
-        Index = -1;
-        CommandSetType = CommandTypes.None;
-        Command = null;
         Commands = new List<Command>();
-        NumberTilemap.ClearAllTiles();
-        tiles.ClearAllTiles();
     }
 
     public void OnCharDeath()
@@ -365,10 +354,42 @@ public class Player : MonoBehaviour
 
         if (index != -1)
             EnemyCharacters.Remove(EnemyCharacters[index]);
+
+        if (EnemyCharacters.Count == 0)
+        {
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            SceneManager.LoadScene("Congratulations");
+        }
+
+        if (PlayerCharacters.Count == 0)
+        {
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            SceneManager.LoadScene("Game Over");
+        }
     }
 
     public void EnemyTurnOver()
     {
+        _CursorPause = false;
         PlayerTurn = true;
+        Camera.main.GetComponent<CameraMovement>().ForcePosition(PlayerCharacters[0].GetPosition());
+        Position = PlayerCharacters[0].GetPosition();
+    }
+
+    public void ResetCharacterChosen()
+    {
+        _CursorPause = false;
+        
+        ResetUI();
+        CharacterChosen = null;
+        NumberTilemap.ClearAllTiles();
+        tiles.ClearAllTiles();
+        Command = null;
+        CommandSetType = CommandTypes.None;
+    }
+
+    public void ResetUI()
+    {
+        UI.gameObject.SetActive(false);
     }
 }
