@@ -65,6 +65,8 @@ public class UITracking : MonoBehaviour
         buttons[buttons.Count - 1].GetComponent<Button>().onClick.AddListener(Player.Instance.ResetCharacterChosen);
         
         ButtonParent.GetComponent<ButtonKeyboardController>().enabled = true;
+        
+        GetComponentInChildren<CharacterAnimationUI>().SetCharacterAnimation(character);
     }
 
     private void OnDisable()
