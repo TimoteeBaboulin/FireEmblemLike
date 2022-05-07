@@ -8,6 +8,7 @@ public class HealthBar : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         scale.x = (float) character.health / character.MaxHealth;
+        scale.x *= 0.1f;
         transform.localScale = scale;
     }
 }

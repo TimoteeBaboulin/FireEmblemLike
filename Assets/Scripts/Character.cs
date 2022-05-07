@@ -197,12 +197,18 @@ public class Character : MonoBehaviour
         return HasPlayed;
     }
 
+    public void OnDestroy()
+    {
+        Player.OnTurnChange -= ChangeTurn;
+    }
+
     public void ChangeTurn()
     {
         HasPlayed = false;
-        if (_Armor == null)
-            Debug.Log("WHAT THE FUCK IS WRONG");
         movementPoints = maxMovement + _Armor.movement;
+        if (gameObject == null)
+            return;
+        GetComponent<Animator>().SetBool("Attack", false);
     }
     public bool ChangeEquipment(Armor armor)
     {

@@ -46,6 +46,7 @@ public class AttackCommand : Command
         {
             target.GetHit(user._Weapon.damage, user._Weapon.type);
             user.Played();
+            user.GetComponent<Animator>().SetBool("Attack", true);
             return true;
         }
         
@@ -57,7 +58,7 @@ public class AttackCommand : Command
                 {
                     target.GetHit(user._Weapon.damage, user._Weapon.type);
                     user.Played();
-
+                    user.GetComponent<Animator>().SetBool("Attack", true);
                     return true;
                 }
             }
@@ -87,6 +88,7 @@ public class AttackCommand : Command
         {
             target.GetHit(user._Weapon.damage, user._Weapon.type);
             user.Played();
+            user.GetComponent<Animator>().SetBool("Attack", true);
             return true;
         }
 
@@ -98,6 +100,7 @@ public class AttackCommand : Command
                 (float) (attackPosition.y - userPosition.y))))
             {
                 target.GetHit(user._Weapon.damage, user._Weapon.type);
+                user.GetComponent<Animator>().SetBool("Attack", true);
                 return true;
             }
         }
