@@ -146,7 +146,7 @@ public class Character : MonoBehaviour
         health -= trueDamage;
         if (health <= 0) {
             OnDeath.Invoke();
-            Destroy(gameObject);
+            Destroy(gameObject, 0.5f);
         }
         
         gameObject.GetComponentInChildren<HealthBar>().UpdateHealth(this);

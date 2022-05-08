@@ -27,6 +27,11 @@ public class EnemyManager : MonoBehaviour
 
         EnemyTurn = false;
         
+        
+    }
+
+    private void Start()
+    {
         foreach (var character in GameObject.FindWithTag("Characters").GetComponentsInChildren<Character>())
         {
             if (character.team == Character.Team.Player) {

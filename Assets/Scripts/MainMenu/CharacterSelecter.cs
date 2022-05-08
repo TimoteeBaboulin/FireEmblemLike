@@ -22,11 +22,6 @@ public class CharacterSelecter : MonoBehaviour
         Index = 0;
     }
 
-    private void OnEnable()
-    {
-        Text.text = Classes[Index];
-    }
-
     public void SetPath(string pathName)
     {
         StringName = pathName;
@@ -41,11 +36,12 @@ public class CharacterSelecter : MonoBehaviour
         for (int x = 0; x < Classes.Count; x++) {
             if (Classes[x] == ClassName) {
                 Index = x;
+                Text.text = ClassName;
                 break;
             }
         }
 
-        Text.text = ClassName;
+        
     }
 
     public void Next()
