@@ -31,6 +31,7 @@ public class CharacterSpawner : MonoBehaviour
 
     private void Awake()
     {
+        _Index = 0;
         SetUpGame();
         
     }
@@ -70,7 +71,7 @@ public class CharacterSpawner : MonoBehaviour
         player.transform.position = position;
         player.GetComponent<Character>().movementPoints = 5;
 
-        string Class = PlayerPrefs.GetString("Class" + _Index);
+        string Class = PlayerPrefs.GetString("Class" + (_Index + 1));
 
         switch (Class)
         {

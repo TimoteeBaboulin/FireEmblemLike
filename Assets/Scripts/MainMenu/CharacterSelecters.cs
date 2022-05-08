@@ -9,16 +9,24 @@ public class CharacterSelecters : MonoBehaviour
 
     private void OnEnable()
     {
-        if (PlayerPrefs.GetString("Class1") == null)
+        if (PlayerPrefs.GetString("Class1") == "")
         {
             PlayerPrefs.SetString("Class1", "Sword");
+        }
+
+        if (PlayerPrefs.GetString("Class2") == "")
+        {
             PlayerPrefs.SetString("Class2", "Spear");
+        }
+        
+        if (PlayerPrefs.GetString("Class3") == "")
+        {
             PlayerPrefs.SetString("Class3", "Axe");
         }
 
         for (int x = 0; x < Selecters.Count; x++)
         {
-            Selecters[x].SetPath("Class" + x.ToString());
+            Selecters[x].SetPath("Class" + (x+1).ToString());
         }
     }
 }
